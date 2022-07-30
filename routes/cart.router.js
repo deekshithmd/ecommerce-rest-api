@@ -1,8 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { addCart, deleteCart } = require("../controllers/cart.controller");
+const {
+  addItemToCart,
+  deleteItemFromCart,
+  getCart,
+} = require("../controllers/cart.controller");
+const { verifyToken } = require("../validation/verifyToken");
 
-router.post("/add", addCart);
-router.post("/delete", deleteCart);
+router.get("/", verifyToken, getCart);
+router.post("/add", verifyToken, addItemToCart);
+router.post("/delete", verifyToken, deleteItemFromCart);
 
 module.exports = router;

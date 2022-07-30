@@ -1,25 +1,39 @@
 const User = require("../models/user.model");
+const Product = require("../models/product.model");
 
-const addWishlist = async (req, res) => {
-  const product = req.body;
-  const id = "62e27460c5fd375b8a272e20";
+const getWishlist = async (req, res) => {
+  const { _id } = req.user;
   try {
-    const user = await User.findById(id);
-    user.wishlist.push(product);
-    await User.findByIdAndUpdate(id, user);
-    res.status(201).json({ data: user });
+    const user = await User.findById(_id);
+    const { wishlist } = user;
+    res.status(201).json({ data: wishlist });
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
 };
 
-const deleteWishlist = async (req, res) => {
-  // const id=req.body
-  const id = "62e263eb1c9fd901b141363d";
-  const userId = "62e27460c5fd375b8a272e20";
-  const user = await User.findById(userId);
-  const newWishlist = user.wishlist.filter((item) => item._id !== id);
+const addItemToWishlist = async (req, res) => {
+  const { productId } = req.body;
+  const { _id } = req.user;
   try {
+    const user = await User.findById(_id);
+    const product = await Product.findById(productId);
+    user.wishlist.push(product);
+    await User.findByIdAndUpdate(_id, user);
+    res.status(201).json({ data: user });
+  } catch (error) {
+    console.log("catch");
+    res.status(409).json({ message: error.message });
+  }
+};
+
+const deleteItemFromWishlist = async (req, res) => {
+  const { productId } = req.body;
+  const { _id: userId } = req.user;
+  try {
+    const user = await User.findById(userId);
+    const newWishlist = user.wishlist.filter((item) => item._id !== productId);
+    // console.log("new",newWishlist)
     const result = await User.findByIdAndUpdate(
       { _id: userId },
       { wishlist: newWishlist }
@@ -30,4 +44,4 @@ const deleteWishlist = async (req, res) => {
   }
 };
 
-module.exports = { addWishlist, deleteWishlist };
+module.exports = { getWishlist, addItemToWishlist, deleteItemFromWishlist };
