@@ -4,11 +4,15 @@ const {
   addItemToCart,
   deleteItemFromCart,
   getCart,
+  incrementCartQuantity,
+  decrementCartQuantity,
 } = require("../controllers/cart.controller");
 const { verifyToken } = require("../validation/verifyToken");
 
 router.get("/", verifyToken, getCart);
-router.post("/add", verifyToken, addItemToCart);
-router.post("/delete", verifyToken, deleteItemFromCart);
+router.post("/add/:productId", verifyToken, addItemToCart);
+router.delete("/delete/:productId", verifyToken, deleteItemFromCart);
+router.post("/increment/:productId", verifyToken, incrementCartQuantity);
+router.post("/decrement/:productId", verifyToken, decrementCartQuantity);
 
 module.exports = router;
